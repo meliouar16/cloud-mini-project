@@ -11,7 +11,7 @@ La note finale est calculée sur **100 points**.
 # 1. Fonctionnement global du projet (30 points)
 
 | Critère                          | Description                                                                                              |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------- | ------ |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------- | 
 | Démarrage du projet              | Le projet peut être lancé sur une machine externe en suivant uniquement la notice d’installation fournie |
 | Application opérationnelle       | L’application répond correctement aux manipulations décrites dans le README                              |
 | Interaction entre les composants | Les différentes parties du système communiquent correctement entre elles                                 |
@@ -22,7 +22,7 @@ La note finale est calculée sur **100 points**.
 # 2. Reproductibilité et qualité technique (20 points)
 
 | Critère                      | Description                                                                                   |
-| ---------------------------- | --------------------------------------------------------------------------------------------- | ------ |
+| ---------------------------- | --------------------------------------------------------------------------------------------- | 
 | Lancement automatisé         | Le projet peut être lancé sans configuration manuelle complexe                                |
 | Isolation de l’environnement | Le projet ne dépend pas de composants installés localement hors des outils standards demandés |
 
@@ -31,7 +31,7 @@ La note finale est calculée sur **100 points**.
 # 3. README et documentation (30 points)
 
 | Critère                           | Description                                                                        |
-| --------------------------------- | ---------------------------------------------------------------------------------- | ------ |
+| --------------------------------- | ---------------------------------------------------------------------------------- | 
 | Notice d’installation             | Instructions claires permettant de lancer le projet étape par étape                |
 | Guide d’utilisation               | Manipulations permettant d’observer les comportements demandés dans le TP          |
 | Réponses aux questions théoriques | Réponses claires, structurées et compréhensibles                                   |
@@ -42,7 +42,7 @@ La note finale est calculée sur **100 points**.
 # 4. Compréhension et analyse (20 points)
 
 | Critère                            | Description                                                              |
-| ---------------------------------- | ------------------------------------------------------------------------ | ------ |
+| ---------------------------------- | ------------------------------------------------------------------------ | 
 | Justification des choix            | Les décisions prises sont expliquées et cohérentes                       |
 | Analyse des comportements observés | Les observations montrent une compréhension du fonctionnement du système |
 | Qualité des explications           | Les explications montrent une compréhension des concepts manipulés       |

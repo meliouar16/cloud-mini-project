@@ -53,10 +53,6 @@ docker run --rm hello-world
 - **YAML** (Red Hat)
 - **Thunder Client** (Thunder client)
 
-### URL github 
-
-https://github.com/ynov-valentin/cloud-student-repo.git
-
 ## Étape 1 — Créer une API minimale (sans Docker)
 
 ### Objectif
