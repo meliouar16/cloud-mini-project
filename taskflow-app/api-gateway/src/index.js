@@ -15,16 +15,17 @@ const TASK_SERVICE_URL =
   process.env.TASK_SERVICE_URL || "http://localhost:3002";
 const NOTIFICATION_SERVICE_URL =
   process.env.NOTIFICATION_SERVICE_URL || "http://localhost:3003";
+const ERROR_CODE_400 = 400;
 
 app.use(
   pinoHttp({
     logger,
     customLogLevel: (req, res) => {
-      if (res.statusCode >= ERROR_CODE) return "error";
+      if (res.statusCode >= ERROR_CODE_400) return "error";
       return "info";
     },
     customSuccessMessage: (req, res) => {
-      if (res.statusCode >= 400) return req.errorMessage ?? `request failed`;
+      if (res.statusCode >= ERROR_CODE_400) return req.errorMessage ?? `request failed`;
       return `${req.method} completed`;
     },
     customErrorMessage: (req, res, err) => `request failed : ${err.message}`,

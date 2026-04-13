@@ -12,16 +12,18 @@ const {
 const logger = pino({ level: process.env.LOG_LEVEL || "info" });
 const app = express();
 
+const ERROR_CODE_400 = 400;
+
 app.use(express.json());
 app.use(
   pinoHttp({
     logger,
     customLogLevel: (req, res) => {
-      if (res.statusCode >= ERROR_CODE) return "error";
+      if (res.statusCode >= ERROR_CODE_400) return "error";
       return "info";
     },
     customSuccessMessage: (req, res) => {
-      if (res.statusCode >= 400) return req.errorMessage ?? `request failed`;
+      if (res.statusCode >= ERROR_CODE_400) return req.errorMessage ?? `request failed`;
       return `${req.method} completed`;
     },
     customErrorMessage: (req, res, err) => `request failed : ${err.message}`,
