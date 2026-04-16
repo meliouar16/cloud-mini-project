@@ -1,80 +1,41 @@
-# TP : Ce fichier est volontairement incomplet.
-# Votre mission :
-# 1. Compléter la config OTel Collector dans infra/otel/config.yml
-# 2. Compléter prometheus.yml avec les scrape_configs de chaque service
-# 3. Vérifier que Grafana reçoit bien des données
+  # TP : Ce fichier est volontairement incomplet.
+  # Votre mission :
+  # 1. Compléter la config OTel Collector dans infra/otel/config.yml
+  # 2. Compléter prometheus.yml avec les scrape_configs de chaque service
+  # 3. Vérifier que Grafana reçoit bien des données
 
-services:
-  otel-collector:
-    image: otel/opentelemetry-collector-contrib:latest
-    command: ["--config=/etc/otel/config.yml"]
-    ports:
-      - "4317:4317" # gRPC
-      - "4318:4318" # HTTP
-      - "8888:8888" # métriques internes du collector
-    volumes:
-      - ./infra/otel/config.yml:/etc/otel/config.yml
-    depends_on:
-      - tempo
+# services:
+#   otel-collector:
+#     image: otel/opentelemetry-collector-contrib:latest
+#     ports:
+#       - "4317:4317"   # gRPC
+#       - "4318:4318"   # HTTP
+#       - "8888:8888"   # métriques internes du collector
+#     volumes:
+#       - ./infra/otel/config.yml:/etc/otel/config.yml
+#     command: ["--config=/etc/otel/config.yml"]
 
-  tempo:
-    image: grafana/tempo:2.4.0
-    command: ["-config.file=/etc/tempo.yml"]
-    ports:
-      - "3200:3200"
-    volumes:
-      - ./infra/tempo/tempo.yml:/etc/tempo.yml
-      - tempo_data:/var/tempo
+#   prometheus:
+#     image: prom/prometheus:latest
+#     ports:
+#       - "9090:9090"
+#     volumes:
+#       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#       - prometheus_data:/prometheus
 
-  prometheus:
-    image: prom/prometheus:latest
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus_data:/prometheus
-    depends_on:
-      - otel-collector
+#   grafana:
+#     image: grafana/grafana:latest
+#     ports:
+#       - "3100:3000"
+#     environment:
+#       GF_SECURITY_ADMIN_PASSWORD: admin
+#       GF_USERS_ALLOW_SIGN_UP: "false"
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       - ./infra/grafana/provisioning:/etc/grafana/provisioning
+#     depends_on:
+#       - prometheus
 
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3100:3000"
-    env_file:
-      - .env
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./infra/grafana/provisioning:/etc/grafana/provisioning
-      - ./infra/grafana/dashboards:/etc/grafana/dashboards
-    depends_on:
-      - prometheus
-      - tempo
-      - loki
-
-  loki:
-    image: grafana/loki:latest
-    command: ["-config.file=/etc/loki/loki-config.yml"]
-    volumes:
-      - ./infra/loki/loki-config.yml:/etc/loki/loki-config.yml
-      - loki_data:/loki
-
-  promtail:
-    image: grafana/promtail:latest
-    command: ["-config.file=/etc/promtail/promtail-config.yml"]
-    volumes:
-      - ./infra/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - loki
-
-volumes:
-  tempo_data:
-  prometheus_data:
-  grafana_data:
-  loki_data:
+# volumes:
+#   prometheus_data:
+#   grafana_data:

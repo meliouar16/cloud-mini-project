@@ -1,10 +1,6 @@
 const express = require("express");
 const db = require("./db");
 const { publish } = require("./publisher");
-const { tasksCreatedTotal, tasksStatusChangesTotal, tasksGauge } = require("./metrics");
-const { trace } = require("@opentelemetry/api");
-
-const tracer = trace.getTracer("task-service");
 
 const router = express.Router();
 
@@ -72,16 +68,11 @@ router.post("/", async (req, res) => {
     );
     const task = result.rows[0];
 
-    tasksCreatedTotal.inc({ priority: task.priority });
-    tasksGauge.inc({ status: task.status });
-
-    const span = tracer.startSpan("publish.task.created");
     await publish("task.created", {
       taskId: task.id,
       title: task.title,
       assigneeId: task.assignee_id,
     });
-    span.end();
 
     res.status(201).json(task);
   } catch (err) {
@@ -123,10 +114,6 @@ router.patch("/:id", async (req, res) => {
     const task = result.rows[0];
 
     if (status && status !== current.rows[0].status) {
-      tasksStatusChangesTotal.inc({ from_status: current.rows[0].status, to_status: status });
-      tasksGauge.dec({ status: current.rows[0].status });
-      tasksGauge.inc({ status });
-
       await publish("task.status_changed", {
         taskId: task.id,
         oldStatus: current.rows[0].status,
@@ -150,7 +137,6 @@ router.delete("/:id", async (req, res) => {
     );
     if (!result.rows[0])
       return res.status(404).json({ error: "Task not found" });
-    tasksGauge.dec({ status: result.rows[0].status });
     res.status(204).send();
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });

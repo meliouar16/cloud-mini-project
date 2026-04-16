@@ -1,5 +1,5 @@
 require("./tracing");
-const { register, httpRequestsTotal, httpRequestDurationMs } = require("./metrics");
+const { register } = require("./metrics");
 const express = require("express");
 const pino = require("pino");
 const pinoHttp = require("pino-http");
@@ -25,16 +25,6 @@ app.use(
     customErrorMessage: (req, res, err) => `request failed : ${err.message}`,
   }),
 );
-
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    const route = req.route?.path ?? req.path;
-    httpRequestsTotal.inc({ method: req.method, route, status: res.statusCode });
-    httpRequestDurationMs.observe({ method: req.method, route, status: res.statusCode }, Date.now() - start);
-  });
-  next();
-});
 
 app.get("/health", (req, res) =>
   res.json({ status: "ok", service: "task-service" }),

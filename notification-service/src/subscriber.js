@@ -1,6 +1,5 @@
 const { createClient } = require('redis');
 const pino = require('pino');
-const { notificationsSentTotal } = require('./metrics');
 
 const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
@@ -19,8 +18,6 @@ async function startSubscriber() {
     const data = JSON.parse(message);
     logger.info({ event: 'task.created', data }, 'New task created');
 
-    notificationsSentTotal.inc({ event_type: 'task.created' });
-
     if (data.assigneeId) {
       const notif = {
         id: Date.now().toString(),
@@ -38,8 +35,6 @@ async function startSubscriber() {
   await subscriber.subscribe('task.status_changed', (message) => {
     const data = JSON.parse(message);
     logger.info({ event: 'task.status_changed', data }, 'Task status changed');
-
-    notificationsSentTotal.inc({ event_type: 'task.status_changed' });
 
     if (data.assigneeId) {
       const notif = {
