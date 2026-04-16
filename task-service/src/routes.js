@@ -1,7 +1,11 @@
 const express = require("express");
 const db = require("./db");
 const { publish } = require("./publisher");
-const { tasksCreatedTotal, tasksStatusChangesTotal, tasksGauge } = require("./metrics");
+const {
+  tasksCreatedTotal,
+  tasksStatusChangesTotal,
+  tasksGauge,
+} = require("./metrics");
 const { trace } = require("@opentelemetry/api");
 
 const tracer = trace.getTracer("task-service");
@@ -30,7 +34,7 @@ router.get("/", async (req, res) => {
     }
     if (conditions.length) query += " WHERE " + conditions.join(" AND ");
     query += " ORDER BY created_at DESC";
-    
+
     const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
@@ -76,12 +80,15 @@ router.post("/", async (req, res) => {
     tasksGauge.inc({ status: task.status });
 
     const span = tracer.startSpan("publish.task.created");
-    await publish("task.created", {
-      taskId: task.id,
-      title: task.title,
-      assigneeId: task.assignee_id,
-    });
-    span.end();
+    try {
+      await publish("task.created", {
+        taskId: task.id,
+        title: task.title,
+        assigneeId: task.assignee_id,
+      });
+    } finally {
+      span.end();
+    }
 
     res.status(201).json(task);
   } catch (err) {
@@ -123,16 +130,24 @@ router.patch("/:id", async (req, res) => {
     const task = result.rows[0];
 
     if (status && status !== current.rows[0].status) {
-      tasksStatusChangesTotal.inc({ from_status: current.rows[0].status, to_status: status });
+      tasksStatusChangesTotal.inc({
+        from_status: current.rows[0].status,
+        to_status: status,
+      });
       tasksGauge.dec({ status: current.rows[0].status });
       tasksGauge.inc({ status });
 
-      await publish("task.status_changed", {
-        taskId: task.id,
-        oldStatus: current.rows[0].status,
-        newStatus: status,
-        assigneeId: task.assignee_id,
-      });
+      const span = tracer.startSpan("publish.task.status_changed");
+      try {
+        await publish("task.status_changed", {
+          taskId: task.id,
+          oldStatus: current.rows[0].status,
+          newStatus: status,
+          assigneeId: task.assignee_id,
+        });
+      } finally {
+        span.end();
+      }
     }
 
     res.json(task);

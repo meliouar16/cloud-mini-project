@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "install:all": "bash scripts/install-all.sh",
-    "dev": "docker compose up --build",
-    "dev:infra": "docker compose -f docker-compose.infra.yml up -d",
+    "dev": "docker compose up -d --build",
+    "dev:all": "docker compose -f docker-compose.yml -f docker-compose.infra.yml up -d --build",
+    "down:all": "docker compose -f docker-compose.yml -f docker-compose.infra.yml down --remove-orphans",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "lint:gateway":      "npm run lint -w api-gateway",
