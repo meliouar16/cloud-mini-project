@@ -60,6 +60,8 @@ services:
   loki:
     image: grafana/loki:latest
     command: ["-config.file=/etc/loki/loki-config.yml"]
+    ports:
+      - "3100:3100"
     volumes:
       - ./infra/loki/loki-config.yml:/etc/loki/loki-config.yml
       - loki_data:/loki
@@ -69,7 +71,9 @@ services:
     command: ["-config.file=/etc/promtail/promtail-config.yml"]
     volumes:
       - ./infra/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /etc/machine-id:/etc/machine-id:ro
     depends_on:
       - loki
 
