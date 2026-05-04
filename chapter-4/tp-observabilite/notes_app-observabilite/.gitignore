@@ -20,7 +20,6 @@
 **/.env.*
 **/.env.local
 **/.env.*.local
-kubeconfig.yml
 
 # IDE and editor files
 .vscode/
