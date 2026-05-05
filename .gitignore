@@ -32,3 +32,6 @@ kubeconfig.yml
 # OS files
 .DS_Store
 Thumbs.db
+
+# Notes personnelles
+apprentissage.md
